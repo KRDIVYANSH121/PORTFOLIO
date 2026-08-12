@@ -1,54 +1,39 @@
 "use server";
 
-import { docClient, hasKeys } from "@/lib/aws";
-import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { kv } from "@vercel/kv";
 
-const TABLE_NAME = "PortfolioState";
-const STATE_ID = "main";
+const STATE_KEY = "portfolio_state_main";
 
 export async function getPortfolioStateAction() {
-  if (!hasKeys || !docClient) {
-    return { success: false, message: "AWS keys missing" };
+  const hasKV = !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
+  if (!hasKV) {
+    return { success: false, message: "Vercel KV keys missing" };
   }
 
   try {
-    const response = await docClient.send(
-      new GetCommand({
-        TableName: TABLE_NAME,
-        Key: { id: STATE_ID },
-      })
-    );
-
-    if (response.Item) {
-      return { success: true, data: response.Item.state };
+    const data = await kv.get(STATE_KEY);
+    if (data) {
+      return { success: true, data };
     } else {
-      return { success: false, message: "No state found" };
+      return { success: false, message: "No state found in KV" };
     }
   } catch (error: any) {
-    console.error("AWS Get Error:", error);
+    console.error("KV Get Error:", error);
     return { success: false, message: error.message };
   }
 }
 
 export async function updatePortfolioStateAction(stateData: any) {
-  if (!hasKeys || !docClient) {
-    return { success: false, message: "AWS keys missing" };
+  const hasKV = !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
+  if (!hasKV) {
+    return { success: false, message: "Vercel KV keys missing" };
   }
 
   try {
-    await docClient.send(
-      new PutCommand({
-        TableName: TABLE_NAME,
-        Item: {
-          id: STATE_ID,
-          state: stateData,
-          updatedAt: new Date().toISOString()
-        },
-      })
-    );
+    await kv.set(STATE_KEY, stateData);
     return { success: true };
   } catch (error: any) {
-    console.error("AWS Put Error:", error);
+    console.error("KV Set Error:", error);
     return { success: false, message: error.message };
   }
 }
