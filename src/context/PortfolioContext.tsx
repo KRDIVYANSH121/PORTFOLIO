@@ -144,18 +144,52 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount
+  const hasAwsKeys = !!process.env.NEXT_PUBLIC_AWS_CONFIGURED || false; // We can't check server envs securely here, so we'll check the action result
+
   useEffect(() => {
-    const saved = localStorage.getItem("portfolio_state");
-    if (saved) {
-      try {
-        setState(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse portfolio state from localStorage");
+    async function loadData() {
+      // Try loading from AWS
+      const { getPortfolioStateAction } = require("@/app/actions");
+      const result = await getPortfolioStateAction();
+      
+      if (result.success && result.data) {
+        setState(result.data as PortfolioState);
+        setIsLoaded(true);
+      } else {
+        console.log("AWS load failed or no keys, falling back to local storage:", result.message);
+        fallbackToLocal();
       }
     }
-    setIsLoaded(true);
+    
+    loadData();
+
+    function fallbackToLocal() {
+      const saved = localStorage.getItem("portfolio_state");
+      if (saved) {
+        try { setState(JSON.parse(saved)); } catch (e) {}
+      }
+      setIsLoaded(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    
+    const timeoutId = setTimeout(async () => {
+      if (isAdminMode) {
+        const { updatePortfolioStateAction } = require("@/app/actions");
+        const result = await updatePortfolioStateAction(state);
+        if (!result.success) {
+           console.log("AWS save failed, falling back to local storage:", result.message);
+           localStorage.setItem("portfolio_state", JSON.stringify(state));
+        }
+      } else {
+        localStorage.setItem("portfolio_state", JSON.stringify(state));
+      }
+    }, 1000);
+    
+    return () => clearTimeout(timeoutId);
+  }, [state, isLoaded, isAdminMode]);
 
   const saveChanges = () => {
     localStorage.setItem("portfolio_state", JSON.stringify(state));
