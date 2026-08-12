@@ -156,7 +156,7 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
         setState(result.data as PortfolioState);
         setIsLoaded(true);
       } else {
-        console.log("Cloud DB load failed or no keys, falling back to local storage:", result.message);
+        console.log("GitHub Gist load failed or no keys, falling back to local storage:", result.message);
         fallbackToLocal();
       }
     }
@@ -180,7 +180,7 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
         const { updatePortfolioStateAction } = require("@/app/actions");
         const result = await updatePortfolioStateAction(state);
         if (!result.success) {
-           console.log("Cloud DB save failed, falling back to local storage:", result.message);
+           console.log("GitHub Gist save failed, falling back to local storage:", result.message);
            localStorage.setItem("portfolio_state", JSON.stringify(state));
         }
       } else {
