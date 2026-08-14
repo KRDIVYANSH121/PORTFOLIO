@@ -1,35 +1,82 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import { Providers } from "@/components/Providers";
+import type { Metadata, Viewport } from "next";
+import { Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next"
+import WireframeBackground from "./components/WireframeBackground";
+
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const poppins = Poppins({
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
+  variable: "--font-poppins",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "K R Divyansh | Portfolio",
-  description: "Computer Science & Engineering Student @ SRM University AP | Aspiring DevOps & Systems Engineer",
+  title: "K R DIVYANSH - DevSecOps Engineer",
+  description: "A self-taught UI/UX designer and Software Engineer at WebHR. Creating meaningful and delightful digital products that balance user needs and business goals. 3+ years of industry experience.",
+  keywords: [
+    "K R DIVYANSH",
+    "Software Engineer",
+    "UI/UX Designer",
+    "Frontend Developer",
+    "React Developer",
+    "Next.js Developer",
+    "Web Designer",
+    "WebHR Engineer",
+    "Portfolio",
+  ],
+  authors: [{ name: "K R DIVYANSH" }],
+  creator: "K R DIVYANSH",
+  publisher: "K R DIVYANSH",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://ibiimemon.com",
+    title: "K R DIVYANSH - DevSecOps Engineer",
+    description: "A self-taught UI/UX designer and Software Engineer at WebHR. Creating meaningful and delightful digital products.",
+    siteName: "K R DIVYANSH Portfolio",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "K R DIVYANSH - DevSecOps Engineer",
+    description: "A self-taught UI/UX designer and Software Engineer at WebHR.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
-        <Providers>{children}</Providers>
+    <html lang="en">
+      <head>
+        <link rel="canonical" href="https://ibiimemon.com" />
+      </head>
+      <body
+        className={`${poppins.variable} font-sans antialiased bg-[#0a0512]`}
+      >
+        <WireframeBackground />
+        {children}
+        <Analytics />
       </body>
     </html>
   );

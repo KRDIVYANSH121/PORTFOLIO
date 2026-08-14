@@ -27,43 +27,31 @@ export const NeuralBackground = () => {
           events: {
             onHover: {
               enable: true,
-              mode: "grab",
+              mode: "repel",
             },
           },
           modes: {
-            grab: {
-              distance: 250,
-              links: {
-                opacity: 0.9,
-                color: "#00F0FF",
-              },
+            repel: {
+              distance: 100,
+              duration: 0.4,
             },
           },
         },
         particles: {
           color: {
-            value: ["#00F0FF", "#FF0055", "#7000FF", "#FFBD2E"],
+            value: ["#FFFFFF", "#E5A88B", "#888888"],
           },
           links: {
-            color: "#FF0055",
-            distance: 180,
-            enable: true,
-            opacity: 0.8,
-            width: 2.5,
-            triangles: {
-              enable: true,
-              opacity: 0.15,
-              color: "#7000FF"
-            },
+            enable: false,
           },
           move: {
             direction: "none",
             enable: true,
             outModes: {
-              default: "bounce",
+              default: "out",
             },
             random: true,
-            speed: 1.2,
+            speed: 0.3,
             straight: false,
           },
           number: {
@@ -71,25 +59,25 @@ export const NeuralBackground = () => {
               enable: true,
               area: 800,
             },
-            value: 120, // Adjust number based on desired density
+            value: 200,
           },
           opacity: {
-            value: 0.9,
+            value: { min: 0.1, max: 0.7 },
             animation: {
               enable: true,
               speed: 0.5,
-              minimumValue: 0.3,
+              sync: false,
             },
           },
           shape: {
             type: "circle",
           },
           size: {
-            value: { min: 2, max: 6 },
+            value: { min: 0.5, max: 2 },
             animation: {
               enable: true,
-              speed: 4,
-              minimumValue: 1,
+              speed: 1,
+              sync: false,
             },
           },
         },
